@@ -4,9 +4,8 @@ ARG LIVY_BUILDER=sasnouskikh/livy-builder:0.3
 ### Livy Builder Container
 FROM $LIVY_BUILDER as build
 
-ARG LIVY_GITHUB_REPO=jahstreet/incubator-livy
-ARG LIVY_GITHUB_BRANCH=merge/first
-# ARG LIVY_GITHUB_BRANCH=v0.8.0/spark-3.0.0
+ARG LIVY_GITHUB_REPO=qwak-ai/incubator-livy
+ARG LIVY_GITHUB_BRANCH=k8s_client_version_update
 
 RUN git clone https://github.com/${LIVY_GITHUB_REPO}.git --branch ${LIVY_GITHUB_BRANCH} --single-branch --depth=50 && \
     cd incubator-livy && \
@@ -36,7 +35,7 @@ ENV PATH                    $PATH:$LIVY_HOME/bin
 # install livy
 COPY --from=build /apache-livy-${LIVY_VERSION}-bin.zip /
 USER root
-RUN apt-get install -y unzip && \
+RUN apt-get --allow-releaseinfo-change update && apt-get install -y unzip && \
     unzip /apache-livy-${LIVY_VERSION}-bin.zip -d / && \
     mv /apache-livy-${LIVY_VERSION}-bin /opt/ && \
     rm -rf $LIVY_HOME && \
